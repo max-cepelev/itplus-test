@@ -1,0 +1,13 @@
+/* Provide sufficient contrast against white background */
+a {
+  color: #0366d6;
+}
+
+code {
+  color: #E01A76;
+}
+
+body {
+  background-color: #e3e3e3;
+  font-family: 'Montserrat Alternates', sans-serif;
+}
