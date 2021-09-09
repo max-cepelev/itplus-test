@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
-import { ITableData } from '../../types/types';
-import SummaryTable from '../SummaryTable';
-import Spinner from '../Spinner/Spinner';
-import { useData } from '../MainScreen';
+import { ITableData } from '../types/types';
+import SummaryTable from './SummaryTable';
+import Spinner from './Spinner/Spinner';
+import { useData } from './MainScreen';
 
 interface SelectedDateProps {
     startDate: Date;
@@ -17,7 +17,13 @@ const useStyles = makeStyles((theme: Theme) =>
         container: {
             display: 'flex',
             flexWrap: 'wrap',
-            margin: '30px auto'
+            margin: '30px auto',
+            backgroundColor: '#ffffff',
+            maxWidth: '700px',
+            height: '90px',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            borderRadius: '8px'
         },
         textField: {
             marginLeft: theme.spacing(1),

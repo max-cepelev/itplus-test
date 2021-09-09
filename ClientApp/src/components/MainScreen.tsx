@@ -8,9 +8,10 @@ import ConsumerPage from './ConsumerPage';
 import ConsumersNavigation from './ConsumersNavigation/ConsumersNavigation';
 import GraphsPage from './GraphsPage';
 import Menu from './Menu/Menu';
-import SearchPanel from './SearchPanel/SearchPanel';
+import SearchPanel from './SearchPanel';
 
 const dataTransformation = (data: IData) => {
+    
     const tempData: any[] = []
 
     data.plants[0].consumptions.forEach((item: IPlantsConsumptions, id) => {
@@ -36,7 +37,8 @@ const dataTransformation = (data: IData) => {
                         weather: consumption.Weather
                     }
                 ))
-        )})
+            )
+        })
     })
 
     data.plants.forEach((plant: IPlant, id) => {

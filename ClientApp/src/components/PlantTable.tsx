@@ -9,7 +9,6 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import { useData } from './MainScreen';
 import { Spinner } from 'reactstrap';
 
 
@@ -40,7 +39,7 @@ const StyledTableRow = withStyles((theme: Theme) =>
     createStyles({
         root: {
             '&:nth-of-type(odd)': {
-                backgroundColor: '#ffffff',
+                backgroundColor: '#e3e3e3',
             },
         },
     }),
@@ -50,9 +49,7 @@ const StyledTableRow = withStyles((theme: Theme) =>
 const useStyles = makeStyles({
     table: {
         minWidth: 400,
-        maxWidth: 1200,
-        margin: '30px auto',
-        backgroundColor: '#e3e3e3',
+        boxShadow: '(5px 5px 15px rgba(0, 0, 0, 0.25))'
     },
 });
 
@@ -66,8 +63,9 @@ export default function PlantTable({data}: Props): JSX.Element {
 
     if (data) {
         return (
+            <>
+            <h4 style={{textAlign: 'center', margin: '30px auto'}}>{data[0]?.plants[id].name}</h4>
             <TableContainer component={Paper}>
-                <h4 style={{textAlign: 'center', marginTop: '30px'}}>{data[0]?.plants[id].name}</h4>
                 <Table className={classes.table} aria-label="customized table">
                     <TableHead>
                         <TableRow>
@@ -91,6 +89,7 @@ export default function PlantTable({data}: Props): JSX.Element {
                     </TableBody>
                 </Table>
             </TableContainer>
+            </>
         );
     }
 

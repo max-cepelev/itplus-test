@@ -23,7 +23,13 @@ const useStyles = makeStyles((theme: Theme) =>
         container: {
             display: 'flex',
             flexWrap: 'wrap',
-            margin: '30px auto'
+            margin: '30px auto',
+            backgroundColor: '#ffffff',
+            maxWidth: '700px',
+            height: '90px',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            borderRadius: '8px'
         },
         textField: {
             marginLeft: theme.spacing(1),

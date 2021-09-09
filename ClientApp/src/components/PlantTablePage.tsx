@@ -1,6 +1,5 @@
 import React from 'react'
 import { useParams } from 'react-router'
-import { ITableData } from '../types/types'
 import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';

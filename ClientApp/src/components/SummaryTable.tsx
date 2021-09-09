@@ -43,6 +43,7 @@ const StyledTableRow = withStyles((theme: Theme) =>
 const useStyles = makeStyles({
     table: {
         minWidth: 400,
+        boxShadow: '(5px 5px 15px rgba(0, 0, 0, 0.25))'
     },
 });
 
@@ -58,11 +59,11 @@ export default function HouseTablePage({data}: Props): JSX.Element {
                         <TableRow>
                             <StyledTableCell>Дата</StyledTableCell>
                             <StyledTableCell align="center">Температура воздуха</StyledTableCell>
+                            {data[0]?.plants.map(plant => (
+                                <StyledTableCell key={plant.id} align="center">{plant.name}<br />(Цена на кирпич)</StyledTableCell>
+                            ))}
                             {data[0]?.houses.map(house => (
                                 <StyledTableCell key={house.id} align="center">{house.name}</StyledTableCell>
-                            ))}
-                            {data[0]?.plants.map(plant => (
-                                <StyledTableCell key={plant.id} align="center">{`${plant.name} (Цена на кирпич)`}</StyledTableCell>
                             ))}
                         </TableRow>
                     </TableHead>
@@ -71,17 +72,17 @@ export default function HouseTablePage({data}: Props): JSX.Element {
                         const {houses, plants, id, date} = item;
                         return (
                         <StyledTableRow key={id}>
-                            <StyledTableCell component="th" scope="row" style={{width: '40px'}}>
-                                {new Date(date).toLocaleString('ru-RU', {day: 'numeric', month: 'long'})}
+                            <StyledTableCell component="th" scope="row" style={{width: '180px'}}>
+                                {new Date(date).toLocaleString('ru-RU', {day: 'numeric', month: 'long', year: 'numeric'})}
                             </StyledTableCell>
-                            <StyledTableCell align="center" style={{width: '60px'}}>{houses[0]?.weather}</StyledTableCell>
-                            {houses.map(house => (
-                                <StyledTableCell key={house.id} align="center">{house.consumption.toFixed(2)}</StyledTableCell>
-                            ))}
+                            <StyledTableCell align="center" style={{width: '60px'}}>{houses.length > 0 ? houses[0]?.weather : 'нет данных'}</StyledTableCell>
                             {plants.map(plant => (
                                 <StyledTableCell key={plant.id} align="center">
                                     {`${plant.consumption.toFixed(2)} (${plant.price.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB' })})`}
                                 </StyledTableCell>
+                            ))}
+                            {houses.map(house => (
+                                <StyledTableCell key={house.id} align="center">{house.consumption.toFixed(2)}</StyledTableCell>
                             ))}
                         </StyledTableRow>
                     )})}
