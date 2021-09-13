@@ -14,6 +14,8 @@ import { Spinner } from 'reactstrap';
 
 interface Props {
     data: ITableData[]
+    house: boolean
+    plant: boolean
 }
 
 interface ItemPageParams {
@@ -53,7 +55,7 @@ const useStyles = makeStyles({
     },
 });
 
-export default function HouseTable({data}: Props): JSX.Element {
+export default function ConsumerTable({data, house, plant}: Props): JSX.Element {
 
     const params = useParams<ItemPageParams>();
 
@@ -64,26 +66,40 @@ export default function HouseTable({data}: Props): JSX.Element {
     if (data) {
         return (
             <>
-            <h4 style={{textAlign: 'center', margin: '30px auto'}}>{data[0]?.houses[id].name}</h4>
+            <h4 style={{textAlign: 'center', margin: '30px auto'}}>
+                {house && data[0]?.houses[id].name}
+                {plant && data[0]?.plants[id].name}
+            </h4>
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="customized table">
                     <TableHead>
                         <TableRow>
                             <StyledTableCell>Дата</StyledTableCell>
                             <StyledTableCell align="center">Показания</StyledTableCell>
-                            <StyledTableCell align="center">Температура воздуха</StyledTableCell>
+                            {house && <StyledTableCell align="center">Температура воздуха</StyledTableCell>}
+                            {plant && <StyledTableCell align="center">Цена на кирпич</StyledTableCell>}
                         </TableRow>
                     </TableHead>
                     <TableBody>
                     {data.map((item) => {
-                        const houses = item.houses;
+                        const {houses, plants} = item;
                         return (
                         <StyledTableRow key={item.id}>
                             <StyledTableCell component="th" scope="row">
                                 {new Date(item.date).toLocaleString('ru-RU', {day: 'numeric', month: 'long'})}
                             </StyledTableCell>
-                            <StyledTableCell align="center">{houses.length > 0 ? houses[id]?.consumption.toLocaleString('ru-RU') : 'нет данных'}</StyledTableCell>
-                            <StyledTableCell align="center">{houses.length > 0 ? houses[id]?.weather : 'нет данных'}</StyledTableCell>
+                            {house &&
+                                <>
+                                <StyledTableCell align="center">{houses.length > 0 ? houses[id]?.consumption.toLocaleString('ru-RU') : 'нет данных'}</StyledTableCell>
+                                <StyledTableCell align="center">{houses.length > 0 ? houses[id]?.weather : 'нет данных'}</StyledTableCell>
+                                </>
+                            }
+                            {plant &&
+                                <>
+                                <StyledTableCell align="center">{plants[id]?.consumption.toLocaleString('ru-RU')}</StyledTableCell>
+                                <StyledTableCell align="center">{plants[id]?.price.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB' })}</StyledTableCell>
+                                </>
+                            }
                         </StyledTableRow>
                     )})}
                     </TableBody>

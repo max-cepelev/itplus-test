@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router';
 import { Button, Spinner } from 'reactstrap'
-import LineGraph from './LineGraph'
-import { useData } from './MainScreen';
-import PieGraph from './PieGraph';
+import { IHouses, IPlants } from '../../types/types';
+import LineGraph from '../LineGraph';
+import { useData } from '../MainScreen';
+import PieGraph from '../PieGraph';
 
 
 export default function GraphsPage(): React.ReactElement {
@@ -12,8 +13,8 @@ export default function GraphsPage(): React.ReactElement {
 
     const history = useHistory()
 
-    const [houseGraphData, setHouseGraphData] = useState([])
-    const [plantGraphData, setPlantGraphData] = useState([])
+    const [houseGraphData, setHouseGraphData] = useState<{x: number, y: number}[]>([])
+    const [plantGraphData, setPlantGraphData] = useState<{x: number, y: number}[]>([])
     const [totalConsumption, setTotalConsumption] = useState<{x: string, y: number}[]>([])
 
     console.log(totalConsumption);
@@ -21,8 +22,8 @@ export default function GraphsPage(): React.ReactElement {
     useEffect(() => {
         if (data) {
 
-            const housesData: any = []
-            const plantsData: any = []
+            const housesData: {x: number, y: number}[] = []
+            const plantsData: {x: number, y: number}[] = []
 
             let plantsConsumptionTotal = 0;
             let housesConsumptionTotal = 0;
@@ -32,14 +33,14 @@ export default function GraphsPage(): React.ReactElement {
                 let plantsConsumerSum = 0
                 let averagePrice = 0
 
-                date.houses.forEach((house: any) => {
+                date.houses.forEach((house: IHouses) => {
                     housesConsumerSum += house.consumption
                 })
                 housesData.push({
                     y: date.houses[0]?.weather ? date.houses[0]?.weather : 0,
                     x: Math.round(housesConsumerSum)
                 })
-                date.plants.forEach((plant: any) => {
+                date.plants.forEach((plant: IPlants) => {
                     plantsConsumerSum += plant.consumption
                     averagePrice += plant.price
                 })
@@ -74,8 +75,8 @@ export default function GraphsPage(): React.ReactElement {
         return (
             <>
             <Button onClick={() => history.push('/')} variant="contained" color="primary">Назад</Button>
-            <LineGraph data={houseGraphData} text='Температура' color="#FFB830" grapfLabel='Зависимость потребления домов от температуры'/>
-            <LineGraph data={plantGraphData} text='Цена на кирпич' color="#FF2442" grapfLabel='Зависимость потребления заводов от цены на кирпич'/>
+            <LineGraph data={houseGraphData} text='Температура' color="#FFB830" graphLabel='Зависимость потребления домов от температуры'/>
+            <LineGraph data={plantGraphData} text='Цена на кирпич' color="#FF2442" graphLabel='Зависимость потребления заводов от цены на кирпич'/>
             <PieGraph data={totalConsumption}/>
             </>
         )

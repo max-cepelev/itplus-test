@@ -4,11 +4,11 @@ import { ReactElement } from 'react';
 import { useQuery } from 'react-query';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import { IData, IHouse, IHouseConsumptions, IPlant, IPlantsConsumptions } from '../types/types'
-import ConsumerPage from './ConsumerPage';
-import ConsumersNavigation from './ConsumersNavigation/ConsumersNavigation';
-import GraphsPage from './GraphsPage';
+import ConsumerPage from './pages/ConsumerPage';
+import GraphsPage from './pages/GraphsPage';
 import Menu from './Menu/Menu';
-import SearchPanel from './SearchPanel';
+import Spinner from './Spinner/Spinner';
+import TablePage from './pages/TablePage';
 
 const dataTransformation = (data: IData) => {
     
@@ -18,7 +18,7 @@ const dataTransformation = (data: IData) => {
         tempData.push(
             {   
                 id: id,
-                date: item.Date,
+                date: new Date(item.Date),
                 houses: [],
                 plants: []
             })
@@ -28,13 +28,14 @@ const dataTransformation = (data: IData) => {
         tempData.forEach(item => {
             item.houses.push(
                 ...house.consumptions
-                .filter((consumption: IHouseConsumptions) => consumption.Date === item.date)
+                .filter((consumption: IHouseConsumptions) => new Date(consumption.Date).valueOf() === item.date.valueOf())
                 .map((consumption: IHouseConsumptions) => (
                     {   
                         id: house.ConsumerId,
                         name: house.Name,
                         consumption: consumption.Consumption,
-                        weather: consumption.Weather
+                        weather: consumption.Weather,
+                        editMode: false
                     }
                 ))
             )
@@ -45,13 +46,14 @@ const dataTransformation = (data: IData) => {
         tempData.forEach(item => {
             item.plants.push(
                 ...plant.consumptions
-                .filter((consumption: IPlantsConsumptions) => consumption.Date === item.date)
+                .filter((consumption: IPlantsConsumptions) => new Date(consumption.Date).valueOf() === item.date.valueOf())
                 .map((consumption: IPlantsConsumptions) => (
                     {   
                         id: id + 1,
                         name: plant.Name,
                         consumption: consumption.Consumption,
-                        price: consumption.Price
+                        price: consumption.Price,
+                        editMode: false
                     }
                 ))
         )})
@@ -66,11 +68,17 @@ export function useData() {
             'https:/localhost:5001/api/Data'
         );
         return dataTransformation(data)
-    });
+    }, {staleTime: 300000});
 }
 
 
 export default function MainScreen(): ReactElement {
+
+    const { error, isLoading } = useData();
+
+    if (isLoading) return <Spinner/>
+
+    if (error) return <h4>Ошибка получения данных</h4>
     
     return (
         <BrowserRouter>
@@ -79,8 +87,7 @@ export default function MainScreen(): ReactElement {
                     <Menu/>
                 </Route>   
                 <Route path='/table' exact>
-                    <ConsumersNavigation/>
-                    <SearchPanel/>
+                    <TablePage/>
                 </Route>            
                 <Route path='/graphs' exact>
                     <GraphsPage/>

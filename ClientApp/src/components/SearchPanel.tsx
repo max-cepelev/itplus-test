@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect} from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { ITableData } from '../types/types';
-import SummaryTable from './SummaryTable';
-import Spinner from './Spinner/Spinner';
 import { useData } from './MainScreen';
 
+interface Props {
+    setFilterData: Dispatch<SetStateAction<ITableData[]>>
+}
 interface SelectedDateProps {
     startDate: Date;
     endDate: Date;
@@ -33,9 +34,9 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function SearchPanel() {
+export default function SearchPanel({setFilterData}: Props) {
 
-    const { data, error, isLoading } = useData();
+    const {data} = useData();
 
   // The first commit of Material-UI
     const [selectedDate, setSelectedDate] = React.useState<SelectedDateProps>({
@@ -43,9 +44,7 @@ export default function SearchPanel() {
         endDate: new Date('2019-12-31'),
     });
 
-    const [filteredData, setFilteredData] = useState<ITableData[]>([])
-
-    const handleDateChange = (event: any) => {
+    const handleDateChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const {name, value} = event.target;
         setSelectedDate(prevValue => {
             return {
@@ -61,23 +60,19 @@ export default function SearchPanel() {
 
         if (data) {
             const tempData: ITableData[] = data.filter((item) => {
-                const startDate = new Date(item.date).valueOf() + 86400000;
-                const endDate = new Date(item.date).getTime()
-                if (startDate >= selectedDate.startDate.getTime() && endDate <= selectedDate.endDate.getTime()) {
+                const startDate = item.date.valueOf() + 86400000;
+                const endDate = item.date.valueOf()
+                if (startDate >= selectedDate.startDate.valueOf() && endDate <= selectedDate.endDate.valueOf()) {
                     return item;
                 }
+                return null
             })
-            setFilteredData(tempData)
+            setFilterData(tempData)
         }
 
-    }, [selectedDate, data])
-
-    if (isLoading) return <Spinner/>
-
-    if (error) return <h3>Ошибка. Данные не получены</h3>
+    }, [selectedDate, data, setFilterData])
 
     return (
-        <>
         <form className={classes.container} noValidate>
             <TextField
                 id="startDate"
@@ -104,11 +99,6 @@ export default function SearchPanel() {
                 }}
             />
         </form>
-        {filteredData.length > 0 ?
-            <SummaryTable data={filteredData}/> :
-            <Spinner/>
-        }
-        </>
     );
 }
 

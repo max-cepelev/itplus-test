@@ -1,18 +1,17 @@
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { Button } from 'reactstrap';
+import { IHouses, IPlants } from '../../types/types';
 import { useData } from '../MainScreen';
-import Spinner from '../Spinner/Spinner';
 
 import './consumerNavigation.scss'
 
+
 export default function ConsumersNavigation(): JSX.Element {
-    const { data, error, isLoading } = useData();
+
+    const {data} = useData()
+
     const history = useHistory()
-
-    if (isLoading) return <Spinner/>
-
-    if (error) return <p>Ошибка</p>
 
     if (data) {
         return (
@@ -20,12 +19,12 @@ export default function ConsumersNavigation(): JSX.Element {
                 <Button onClick={() => history.push('/')} variant="contained" color="primary">Назад</Button>
                 <h3>Потребители</h3>
                 <ul>
-                    {data[0].houses.map((house: {id: number, name: string, consumption: number, weather: number,}) => (
+                    {data[0].houses.map((house: IHouses) => (
                         <li key={house.id}><Link to={`/houses/${house.id}`}>
                             <p>{house.name}</p>
                         </Link></li>
                     ))}
-                    {data[0].plants.map((plant: {id: number, name: string, consumption: number, price: number,}) => (
+                    {data[0].plants.map((plant: IPlants) => (
                         <li key={plant.id}><Link to={`/plants/${plant.id}`}>
                             <p>{plant.name}</p>
                         </Link></li>

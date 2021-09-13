@@ -10,8 +10,8 @@ interface Props {
 
 export default function PieGraph({data}: Props) {
     return (
-    <svg viewBox="0 0 250 250">
-
+    <div style={{display: 'flex', background: '#ffffff', borderRadius: '8px'}}>
+        <svg viewBox="0 0 250 250">
         <VictoryPie
             standalone={false}
             width={200} height={200}
@@ -26,6 +26,8 @@ export default function PieGraph({data}: Props) {
             x={130} y={20}
             text="Доли общего потребления домов и заводов"
         />
-    </svg>
+        </svg>
+    </div>
+
     )
 }

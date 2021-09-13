@@ -1,32 +1,31 @@
 import React from 'react'
-import {VictoryChart, VictoryVoronoiContainer, VictoryGroup, VictoryTooltip, VictoryLine, VictoryScatter, VictoryLabel }  from 'victory'
+import {VictoryChart, VictoryGroup, VictoryTooltip, VictoryScatter, VictoryLabel }  from 'victory'
 
 
 interface Props {
     data: any
     text: string
     color: string
-    grapfLabel: string
+    graphLabel: string
 }
 
-export default function LineGraph({data, text, color, grapfLabel}: Props) {
+export default function LineGraph({data, text, color, graphLabel}: Props) {
     return (
         <section style={{backgroundColor: '#ffffff', margin: 20, padding: 10 ,borderRadius: 8}}>
-            <VictoryChart height={300} width={1000}
-                containerComponent={<VictoryVoronoiContainer/>}>
+            <VictoryChart height={300} width={1000}>
                 <VictoryGroup
                     color={color}
                     labels={({ datum }) => `${text}: ${datum.y} Потребление: ${datum.x}`}
                     labelComponent={
                     <VictoryTooltip
-                        style={{ fontSize: 10 }}
+                        style={{ fontSize: 7 }}
                     />
                     }
                     data={data}>
                     <VictoryScatter
-                        size={({ active }) => active ? 8 : 3}
+                        size={({ active }) => active ? 5 : 5}
                     />
-                    <VictoryLabel text={grapfLabel} x={225} y={30} textAnchor="middle"/>
+                    <VictoryLabel text={graphLabel} x={225} y={30} textAnchor="middle"/>
                 </VictoryGroup>
             </VictoryChart>
         </section>
