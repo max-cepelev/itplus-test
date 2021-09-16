@@ -3,7 +3,7 @@ import React from 'react'
 import { ReactElement } from 'react';
 import { useQuery } from 'react-query';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
-import { IData, IHouse, IHouseConsumptions, IPlant, IPlantsConsumptions } from '../types/types'
+import { IData, IHouse, IHouseConsumptions, IPlant, IPlantsConsumptions, ITableData } from '../types/types'
 import ConsumerPage from './pages/ConsumerPage';
 import GraphsPage from './pages/GraphsPage';
 import Menu from './Menu/Menu';
@@ -12,7 +12,7 @@ import TablePage from './pages/TablePage';
 
 const dataTransformation = (data: IData) => {
     
-    const tempData: any[] = []
+    const tempData: ITableData[] = []
 
     data.plants[0].consumptions.forEach((item: IPlantsConsumptions, id) => {
         tempData.push(
@@ -32,6 +32,7 @@ const dataTransformation = (data: IData) => {
                 .map((consumption: IHouseConsumptions) => (
                     {   
                         id: house.ConsumerId,
+                        consumerId: house.ConsumerId,
                         name: house.Name,
                         consumption: consumption.Consumption,
                         weather: consumption.Weather,
@@ -50,6 +51,7 @@ const dataTransformation = (data: IData) => {
                 .map((consumption: IPlantsConsumptions) => (
                     {   
                         id: id + 1,
+                        consumerId: plant.ConsumerId,
                         name: plant.Name,
                         consumption: consumption.Consumption,
                         price: consumption.Price,
@@ -65,7 +67,7 @@ const dataTransformation = (data: IData) => {
 export function useData() {
     return useQuery("data", async () => {
         const { data } = await axios.get<IData>(
-            'https:/localhost:5001/api/Data'
+            '/api/Data'
         );
         return dataTransformation(data)
     }, {staleTime: 300000});
@@ -73,12 +75,6 @@ export function useData() {
 
 
 export default function MainScreen(): ReactElement {
-
-    const { error, isLoading } = useData();
-
-    if (isLoading) return <Spinner/>
-
-    if (error) return <h4>Ошибка получения данных</h4>
     
     return (
         <BrowserRouter>

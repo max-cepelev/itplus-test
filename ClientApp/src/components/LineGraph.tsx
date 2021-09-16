@@ -23,7 +23,7 @@ export default function LineGraph({data, text, color, graphLabel}: Props) {
                     }
                     data={data}>
                     <VictoryScatter
-                        size={({ active }) => active ? 5 : 5}
+                        size={4}
                     />
                     <VictoryLabel text={graphLabel} x={225} y={30} textAnchor="middle"/>
                 </VictoryGroup>

@@ -27,26 +27,26 @@ export interface IData {
     plants: IPlant[]
 }
 
-export interface IHouses {
+export interface ITableHouse {
     id: number,
+    consumerId: number,
     name: string,
     consumption: number,
     weather: number,
-    editMode: boolean
 }
 
-export interface IPlants {
+export interface ITablePlant {
     id: number,
-    name: Date,
+    consumerId: number,
+    name: string,
     consumption: number,
     price: number,
-    editMode: boolean
 }
 
 export interface ITableData {
         id: number,
         date: Date,
-        houses: IHouses[],
-        plants: IPlants[]
+        houses: ITableHouse[],
+        plants: ITablePlant[]
 }
 
