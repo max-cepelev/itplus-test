@@ -8,7 +8,8 @@ import TableContainer from '@material-ui/core/TableContainer';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Paper from '@material-ui/core/Paper';
-import DoneIcon from "@material-ui/icons/Check";
+import Pagination from './Pagination/Pagination';
+import EditableCell from './EditableCell';
 
 interface Props {
     data: ITableData[] | undefined;
@@ -54,26 +55,28 @@ const getPriceFormat = (price: number) => {
     return price.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB' })
 }
 
-const getKeyByValue = (object: any, value: number | string | null | undefined) => {
-    return Object.keys(object).find(key => object[key] === value);
-}
 
+let PageSize = 30;
 
 export default function SummaryTable({data}: Props): JSX.Element {
 
+    const [currentPage, setCurrentPage] = useState(1);
+
     const [tableData, setTableData] = useState<ITableData[]>([])
+
+    const [slicedTableData, setSlicedTableData] = useState<ITableData[]>([])
 
     const [isEditMode, setIsEditMode] = useState<{rowId: number | null, cellId: number | null}>({rowId: null, cellId: null})
 
     const classes = useStyles();
 
-    const updateTableData = (rowId: number, cellId: number, cellKey: string, cellValue: number) => {
+    const updateTableData = (rowId: number, cellId: number, cellKey: string , cellValue: number) => {
         setTableData(old =>
             old.map((row, index) => {
-            if (index === rowId) {
+            if (row.id === rowId) {
                 return {
-                    ...old[rowId],
-                    houses: old[rowId].houses.map(house => {
+                    ...old[index],
+                    houses: old[index].houses.map(house => {
                         if (house.consumerId === cellId) {
                             return {
                                 ...house,
@@ -82,7 +85,7 @@ export default function SummaryTable({data}: Props): JSX.Element {
                         }
                         return house
                     }),
-                    plants: old[rowId].plants.map(plant => {
+                    plants: old[index].plants.map(plant => {
                         if (plant.consumerId === cellId) {
                             return {
                                 ...plant,
@@ -99,33 +102,6 @@ export default function SummaryTable({data}: Props): JSX.Element {
         setIsEditMode({rowId: null, cellId: null})
     }
 
-    const EditableCell = (initialValue: any) => {
-
-        const [value, setValue] = useState<{cellValue: number, rowId: number, cellId: number, cellKey: string}>(initialValue)
-
-        const {rowId, cellId, cellKey, cellValue} = value
-    
-        console.log(value)
-    
-        const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            const {value} = e.target
-            if (!isNaN(+value)) {
-                setValue((prevValue) => {
-                    return {
-                        ...prevValue,
-                        cellValue: +value
-                    }
-                })
-            }
-        }
-    
-        return (
-            <>
-            <input style={{maxWidth: '100%', textAlign: 'center'}} type='number' step='any' name={cellKey} value={cellValue} onChange={onChange} />
-            <DoneIcon onClick={() => updateTableData(rowId, cellId, cellKey, cellValue)}/>
-            </>
-        )
-    }
 
     const onEdit = (row: number, cell: number) => {
         setIsEditMode({rowId: row, cellId: cell})
@@ -135,17 +111,23 @@ export default function SummaryTable({data}: Props): JSX.Element {
         data && setTableData(data)
     }, [data])
 
+    useEffect(() => {
+            const firstPageIndex = (currentPage - 1) * PageSize;
+            const lastPageIndex = firstPageIndex + PageSize;
+        setSlicedTableData(tableData.slice(firstPageIndex, lastPageIndex))
+    },[tableData, currentPage])
 
 
     return (
-        tableData &&
+        slicedTableData &&
+        <>
         <TableContainer component={Paper}>
             <Table className={classes.table} aria-label="customized table">
                 <TableHead>
                     <TableRow>
                         <Cell align="center">Дата</Cell>
                         <Cell align="center">Температура воздуха</Cell>
-                        {tableData[0]?.plants.map((plant: ITablePlant) => (
+                        {slicedTableData[0]?.plants.map((plant: ITablePlant) => (
                             <Cell key={plant.id}  style={{textAlign: 'center'}}>
                                 <p>{plant.name}</p>
                                 <div style={{display: 'flex', justifyContent: 'space-around'}}>
@@ -154,23 +136,29 @@ export default function SummaryTable({data}: Props): JSX.Element {
                                 </div>
                             </Cell>
                         ))}
-                        {tableData[0]?.houses.map((house: ITableHouse) => (
+                        {slicedTableData[0]?.houses.map((house: ITableHouse) => (
                             <Cell key={house.id} align="center">{house.name}</Cell>
                         ))}
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                {tableData.map((item) => {
+                {slicedTableData.map((item) => {
                     const {houses, plants, id, date} = item;
                     return (
                     <Row key={id}>
-                        <Cell component="th" scope="row" align="center" style={{width: '145px'}}>
-                            {date.toLocaleString('ru-RU', {day: 'numeric', month: 'long', year: 'numeric'})}
+                        <Cell component="th" scope="row" align="center" style={{width: '135px'}}>
+                            {date.toLocaleString('ru-RU', {day: 'numeric', month: 'long'})}
                         </Cell>
                         {houses.length > 0 ?
-                            <Cell align="center" style={{width: '60px'}} onDoubleClick={() => onEdit(id, houses[0].consumerId +10)}>
-                                {isEditMode.rowId === id && isEditMode.cellId === houses[0].consumerId+10
-                                ? <EditableCell cellValue={houses[0].weather} rowId={id} cellId={houses[0].consumerId} cellKey={getKeyByValue(houses[0], houses[0].weather)}/>
+                            <Cell align="center" style={{width: '60px', cursor: 'pointer'}} onDoubleClick={() => onEdit(id, houses[0].consumerId +10)}>
+                                {isEditMode.rowId === id && isEditMode.cellId === houses[0].consumerId+10 ?
+                                <EditableCell
+                                    rowId={id}
+                                    cellId={houses[0].consumerId}
+                                    cellKey={'weather'}
+                                    cellValue={houses[0].weather}
+                                    updateTableData={updateTableData}
+                                    setIsEditMode={setIsEditMode}/>
                                 : houses[0]?.weather}
                             </Cell> : <Cell align="center">Нет данных</Cell> 
                         }
@@ -178,13 +166,24 @@ export default function SummaryTable({data}: Props): JSX.Element {
                             <Cell key={plant.consumerId}>
                                 <div style={{display: 'flex', justifyContent: 'space-around'}}>
                                     <div style={{cursor: 'pointer', width: '50%', textAlign: 'center'}} onDoubleClick={() => onEdit(id, plant.consumerId + 80)} >
-                                        {isEditMode.rowId === id && isEditMode.cellId === plant.consumerId + 80
-                                        ? <EditableCell cellValue={plant.consumption} rowId={id} cellId={plant.consumerId} cellKey={getKeyByValue(plant, plant.consumption)}/>
+                                        {isEditMode.rowId === id && isEditMode.cellId === plant.consumerId + 80 ?
+                                        <EditableCell
+                                            cellValue={plant.consumption}
+                                            rowId={id} cellId={plant.consumerId}
+                                            cellKey={'consumption'}
+                                            updateTableData={updateTableData}
+                                            setIsEditMode={setIsEditMode}/>
                                         : plant.consumption.toLocaleString('ru')}
                                     </div>
                                     <div style={{cursor: 'pointer', width: '50%', textAlign: 'center'}} onDoubleClick={() => onEdit(id, plant.consumerId + 90)} >
-                                        {isEditMode.rowId === id && isEditMode.cellId === plant.consumerId + 90
-                                        ? <EditableCell cellValue={plant.price} rowId={id} cellId={plant.consumerId} cellKey={getKeyByValue(plant, plant.price)}/>
+                                        {isEditMode.rowId === id && isEditMode.cellId === plant.consumerId + 90 ?
+                                        <EditableCell
+                                            cellValue={plant.price}
+                                            rowId={id}
+                                            cellId={plant.consumerId}
+                                            cellKey={'price'}
+                                            updateTableData={updateTableData}
+                                            setIsEditMode={setIsEditMode}/>
                                         : getPriceFormat(plant.price)}
                                     </div>
                                 </div>
@@ -192,8 +191,14 @@ export default function SummaryTable({data}: Props): JSX.Element {
                         ))}
                         {houses.map((house: ITableHouse) => (
                             <Cell key={house.consumerId} align="center" style={{cursor: 'pointer'}} onDoubleClick={() => onEdit(id, house.consumerId + 50)}>
-                                {isEditMode.rowId === id && isEditMode.cellId === house.consumerId + 50
-                                ? <EditableCell cellValue={house.consumption} rowId={id} cellId={house.consumerId} cellKey={getKeyByValue(house, house.consumption)}/>
+                                {isEditMode.rowId === id && isEditMode.cellId === house.consumerId + 50 ?
+                                <EditableCell
+                                    cellValue={house.consumption}
+                                    rowId={id}
+                                    cellId={house.consumerId}
+                                    cellKey={'consumption'}
+                                    updateTableData={updateTableData}
+                                    setIsEditMode={setIsEditMode}/>
                                 : house.consumption.toLocaleString('ru')}
                             </Cell>
                         ))}
@@ -202,6 +207,15 @@ export default function SummaryTable({data}: Props): JSX.Element {
                 </TableBody>
             </Table>
         </TableContainer>
+        <Pagination
+            siblingCount = {1}
+            className="pagination-bar"
+            currentPage={currentPage}
+            totalCount={tableData.length}
+            pageSize={PageSize}
+            onPageChange={(page) => setCurrentPage(page)}
+        />
+        </>
     );
         
 }

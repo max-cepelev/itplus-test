@@ -14,7 +14,7 @@ export default function LineGraph({data, text, color, graphLabel}: Props) {
         <section style={{backgroundColor: '#ffffff', margin: 20, padding: 10 ,borderRadius: 8}}>
             <VictoryChart height={300} width={1000}>
                 <VictoryGroup
-                    color={color}
+                    style={{ data: { fill: color, fillOpacity: 0.6 }}}
                     labels={({ datum }) => `${text}: ${datum.y} Потребление: ${datum.x}`}
                     labelComponent={
                     <VictoryTooltip

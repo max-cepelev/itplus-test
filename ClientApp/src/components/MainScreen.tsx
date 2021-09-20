@@ -7,7 +7,6 @@ import { IData, IHouse, IHouseConsumptions, IPlant, IPlantsConsumptions, ITableD
 import ConsumerPage from './pages/ConsumerPage';
 import GraphsPage from './pages/GraphsPage';
 import Menu from './Menu/Menu';
-import Spinner from './Spinner/Spinner';
 import TablePage from './pages/TablePage';
 
 const dataTransformation = (data: IData) => {
@@ -36,7 +35,6 @@ const dataTransformation = (data: IData) => {
                         name: house.Name,
                         consumption: consumption.Consumption,
                         weather: consumption.Weather,
-                        editMode: false
                     }
                 ))
             )
@@ -55,7 +53,6 @@ const dataTransformation = (data: IData) => {
                         name: plant.Name,
                         consumption: consumption.Consumption,
                         price: consumption.Price,
-                        editMode: false
                     }
                 ))
         )})

@@ -1,54 +1,42 @@
 import React from 'react'
-import { VictoryArea, VictoryChart, VictoryGroup, VictoryPortal, VictoryScatter, VictoryStack } from 'victory'
+import { VictoryArea, VictoryAxis, VictoryChart, VictoryGroup, VictoryLegend, VictoryScatter, VictoryTheme } from 'victory'
 
 
 interface Props {
-  data: {houses: {x: Date, y: number}[], plants: {x: Date, y: number}[], total: {x: Date, y: number}[]} | undefined
+	data: {houses: {x: Date, y: number}[], plants: {x: Date, y: number}[], total: {x: Date, y: number}[]} | undefined
 }
 
 export default function AreaGraph({data}: Props) {
     return (
         <div style={{width: '100%', backgroundColor: '#ffffff', borderRadius: '8px'}}>
-        <VictoryChart scale={{ x: "time" }} width={1080} height={250} >
-          {/* <VictoryStack colorScale="warm">
-            <VictoryGroup
-              data={data?.total}
-            >
-              <VictoryArea/>
-              <VictoryPortal>
-                <VictoryScatter
-                  style={{ data: { fill: "black" } }}
-                  size={1}
-                />
-              </VictoryPortal>
+        <VictoryChart width={1080} height={250} scale={{ x: "time" }} theme={VictoryTheme.material}>
+            <VictoryLegend x={125} y={15}
+                title="Общее потребление"
+                centerTitle
+                orientation="horizontal"
+                gutter={20}
+                style={{ title: {fontSize: 10 }, labels: {fontSize: 10} }}
+                data={[
+                { name: "Домов", symbol: { fill: "#FFF338"} },
+                { name: "Заводов", symbol: { fill: "#C400FF" } },
+                { name: "Суммарное", symbol: { fill: "#FF2442" } }
+                ]}
+            />
+            <VictoryGroup data={data?.total} style={{ data: { fill: "#FF2442", fillOpacity: 0.6 }}}>
+				<VictoryArea interpolation="natural"/>
+				<VictoryScatter size={2}/>
             </VictoryGroup>
-            <VictoryGroup
-              data={data?.plants}
-            >
-              <VictoryArea/>
-            <VictoryPortal>
-                <VictoryScatter
-                  style={{ data: { fill: "black" } }}
-                  size={1}
-                />
-              </VictoryPortal>
+            <VictoryGroup data={data?.plants} style={{ data: { fill: "#C400FF", fillOpacity: 0.6 }}}>
+				<VictoryArea interpolation="natural" />
+				<VictoryScatter size={2}/>
             </VictoryGroup>
-            <VictoryGroup
-              data={data?.total}
-            >
-              <VictoryArea/>
-              <VictoryPortal>
-                <VictoryScatter
-                  style={{ data: { fill: "black" } }}
-                  size={1}
-                />
-              </VictoryPortal>
+            <VictoryGroup data={data?.houses} style={{ data: { fill: "#FFF338", fillOpacity: 0.6 }}}>
+				<VictoryArea interpolation="natural"/>
+				<VictoryScatter size={2}/>
             </VictoryGroup>
-          </VictoryStack> */}
-            <VictoryArea data={data?.total} interpolation="natural"  style={{ data: { fill: "#bd137c", fillOpacity: 0.6 } }} />
-            <VictoryArea data={data?.plants} interpolation="natural" style={{ data: { fill: "#3d6ba8", fillOpacity: 0.6 } }} />
-            <VictoryArea data={data?.houses} interpolation="natural" style={{ data: { fill: "#c43a31", fillOpacity: 0.6 } }} />
+			<VictoryAxis dependentAxis style={{ tickLabels: {fontSize: '7px', width: '350px'}}}/>
+			<VictoryAxis tickCount={10} style={{axisLabel:{fontSize: '10px'}, tickLabels: {fontSize: '10px'}}}/>
         </VictoryChart>
-      </div>
+		</div>
     )
 }

@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { useHistory } from 'react-router';
-import { Button, Spinner } from 'reactstrap'
-import { IHouses, IPlants, ITableData } from '../../types/types';
+import Spinner from '../Spinner/Spinner'
+import {Button} from '@material-ui/core'
+import { ITableHouse, ITablePlant, ITableData } from '../../types/types';
 import AreaGraph from '../AreaGraph';
 import LineGraph from '../LineGraph';
 import { useData } from '../MainScreen';
-import PieGraph from '../PieGraph';
 
 
 export default function GraphsPage(): React.ReactElement {
@@ -17,12 +17,6 @@ export default function GraphsPage(): React.ReactElement {
     const [houseScatterGraphData, setHouseScatterGraphData] = useState<{x: number, y: number}[]>([])
     const [plantScatterGraphData, setPlantScatterGraphData] = useState<{x: number, y: number}[]>([])
     const [areaGraphData, setAreaGraphData] = useState<{houses: {x: Date, y: number}[], plants: {x: Date, y: number}[], total: {x: Date, y: number}[]}>()
-
-
-
-    console.log(houseScatterGraphData);
-    console.log(plantScatterGraphData);
-    console.log(areaGraphData);
 
     useEffect(() => {
         if (data) {
@@ -40,7 +34,7 @@ export default function GraphsPage(): React.ReactElement {
                 let plantsConsumerSum = 0
                 let averagePrice = 0
 
-                day.houses.forEach((house: IHouses) => {
+                day.houses.forEach((house: ITableHouse) => {
                     housesConsumerSum += house.consumption
                 })
                 housesData.push({
@@ -51,7 +45,7 @@ export default function GraphsPage(): React.ReactElement {
                     x: day.date,
                     y: Math.round(housesConsumerSum) * 10
                 })
-                day.plants.forEach((plant: IPlants) => {
+                day.plants.forEach((plant: ITablePlant) => {
                     plantsConsumerSum += plant.consumption
                     averagePrice += plant.price
                 })
@@ -88,8 +82,8 @@ export default function GraphsPage(): React.ReactElement {
         return (
             <>
             <Button onClick={() => history.push('/')} variant="contained" color="primary">Назад</Button>
-            <LineGraph data={houseScatterGraphData} text='Температура' color="#FFB830" graphLabel='Зависимость потребления домов от температуры'/>
-            <LineGraph data={plantScatterGraphData} text='Цена на кирпич' color="#FF2442" graphLabel='Зависимость потребления заводов от цены на кирпич'/>
+            <LineGraph data={houseScatterGraphData} text='Температура' color="#FFF338" graphLabel='Зависимость потребления домов от температуры'/>
+            <LineGraph data={plantScatterGraphData} text='Цена на кирпич' color="#C400FF" graphLabel='Зависимость потребления заводов от цены на кирпич'/>
             <AreaGraph data={areaGraphData}/>
             </>
         )
