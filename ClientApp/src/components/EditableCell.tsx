@@ -48,22 +48,22 @@ export default function EditableCell(initialValue: EditableCellProps) {
     }
 
     return (
-        <>
-        <input
-            style={{width: '85%', textAlign: 'center', fontSize: '12px', border: '2px solid #4040ff', borderRadius: '5px'}}
+        <div  style={{width: '100%', position: 'relative' , maxWidth: 170, margin: '0 auto'}}>
+            <input
+            style={{width: '85%', textAlign: 'right', fontSize: '12px', border: '2px solid #4040ff', borderRadius: '5px', maxWidth: 170}}
             type='number'
             step='any'
             autoFocus
             name={cellKey}
             value={cellValue}
             onChange={handleChange}
-            onKeyPress={(e) => onPressKey(e)}
-        />
-        <div style={{display: 'flex', justifyContent: 'space-around', marginTop: '5px'}}>
-            <DoneIcon onClick={onSave} style={{color: 'green'}}/>
-            <CloseIcon onClick={onCancel} style={{color: 'red'}}/>
+            onKeyPress={(e) => onPressKey(e)}/>
+            <div style={{display: 'flex', justifyContent: 'space-between', flexDirection: 'column', position: 'absolute', width: 25, height: 50, top: '-15px', right: '-30px'}}>
+                <DoneIcon onClick={onSave} style={{color: 'green'}}/>
+                <CloseIcon onClick={onCancel} style={{color: 'red'}}/>
+            </div>
         </div>
-        </>
+
     )
 }
 

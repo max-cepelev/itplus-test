@@ -1,7 +1,7 @@
 import React from 'react'
 import { Link, useHistory } from 'react-router-dom'
-import { Button } from 'reactstrap';
-import { IHouses, IPlants } from '../../types/types';
+import { Button } from '@material-ui/core';
+import { ITableHouse, ITablePlant } from '../../types/types';
 import { useData } from '../MainScreen';
 
 import './consumerNavigation.scss'
@@ -16,15 +16,15 @@ export default function ConsumersNavigation(): JSX.Element {
     if (data) {
         return (
             <nav className='consumers'>
-                <Button onClick={() => history.push('/')} variant="contained" color="primary">Назад</Button>
+                <Button style={{backgroundColor: 'teal'}} onClick={() => history.push('/')} variant="contained" color="primary">Назад</Button>
                 <h3>Потребители</h3>
                 <ul>
-                    {data[0].houses.map((house: IHouses) => (
+                    {data[0].houses.map((house: ITableHouse) => (
                         <li key={house.id}><Link to={`/houses/${house.id}`}>
                             <p>{house.name}</p>
                         </Link></li>
                     ))}
-                    {data[0].plants.map((plant: IPlants) => (
+                    {data[0].plants.map((plant: ITablePlant) => (
                         <li key={plant.id}><Link to={`/plants/${plant.id}`}>
                             <p>{plant.name}</p>
                         </Link></li>

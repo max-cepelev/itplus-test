@@ -17,8 +17,8 @@ export default function AreaGraph({data}: Props) {
                 gutter={20}
                 style={{ title: {fontSize: 10 }, labels: {fontSize: 10} }}
                 data={[
-                { name: "Домов", symbol: { fill: "#FFF338"} },
-                { name: "Заводов", symbol: { fill: "#C400FF" } },
+                { name: "Домов", symbol: { fill: "#FFB344"} },
+                { name: "Заводов", symbol: { fill: "#2D46B9" } },
                 { name: "Суммарное", symbol: { fill: "#FF2442" } }
                 ]}
             />
@@ -26,11 +26,11 @@ export default function AreaGraph({data}: Props) {
 				<VictoryArea interpolation="natural"/>
 				<VictoryScatter size={2}/>
             </VictoryGroup>
-            <VictoryGroup data={data?.plants} style={{ data: { fill: "#C400FF", fillOpacity: 0.6 }}}>
+            <VictoryGroup data={data?.plants} style={{ data: { fill: "#2D46B9", fillOpacity: 0.6 }}}>
 				<VictoryArea interpolation="natural" />
 				<VictoryScatter size={2}/>
             </VictoryGroup>
-            <VictoryGroup data={data?.houses} style={{ data: { fill: "#FFF338", fillOpacity: 0.6 }}}>
+            <VictoryGroup data={data?.houses} style={{ data: { fill: "#FFB344", fillOpacity: 0.6 }}}>
 				<VictoryArea interpolation="natural"/>
 				<VictoryScatter size={2}/>
             </VictoryGroup>

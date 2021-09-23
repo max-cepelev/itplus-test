@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useHistory } from 'react-router';
 import Spinner from '../Spinner/Spinner'
 import {Button} from '@material-ui/core'
@@ -6,11 +6,16 @@ import { ITableHouse, ITablePlant, ITableData } from '../../types/types';
 import AreaGraph from '../AreaGraph';
 import LineGraph from '../LineGraph';
 import { useData } from '../MainScreen';
+import { Context } from '../Context';
 
 
 export default function GraphsPage(): React.ReactElement {
 
-    const { data, isLoading } = useData();
+    const { state } = useContext(Context);
+
+    const [graphData, setGraphData] = useState<ITableData[]>(state)
+
+    const { data } = useData();
 
     const history = useHistory()
 
@@ -19,7 +24,11 @@ export default function GraphsPage(): React.ReactElement {
     const [areaGraphData, setAreaGraphData] = useState<{houses: {x: Date, y: number}[], plants: {x: Date, y: number}[], total: {x: Date, y: number}[]}>()
 
     useEffect(() => {
-        if (data) {
+            state.length === 0 && data && setGraphData(data)
+    }, [data, state])
+
+    useEffect(() => {
+        if (graphData.length !== 0) {
 
             const housesData: {x: number, y: number}[] = []
             const housesAreaGraphData: {x: Date, y: number}[] = []
@@ -27,9 +36,7 @@ export default function GraphsPage(): React.ReactElement {
             const plantsAreaGraphData: {x: Date, y: number}[] = []
             const totalAreaGraphData: {x: Date, y: number}[] = []
 
-
-
-            data.forEach((day: ITableData) => {
+            graphData.forEach((day: ITableData) => {
                 let housesConsumerSum = 0
                 let plantsConsumerSum = 0
                 let averagePrice = 0
@@ -72,18 +79,15 @@ export default function GraphsPage(): React.ReactElement {
             })
             
         }
-    }, [data])
+    }, [graphData])
 
-
-
-    if (isLoading) return <Spinner/>
 
     if (houseScatterGraphData && plantScatterGraphData.length !== 0) {
         return (
             <>
             <Button onClick={() => history.push('/')} variant="contained" color="primary">Назад</Button>
-            <LineGraph data={houseScatterGraphData} text='Температура' color="#FFF338" graphLabel='Зависимость потребления домов от температуры'/>
-            <LineGraph data={plantScatterGraphData} text='Цена на кирпич' color="#C400FF" graphLabel='Зависимость потребления заводов от цены на кирпич'/>
+            <LineGraph data={houseScatterGraphData} text='Температура' color="#FFB344" graphLabel='Зависимость потребления домов от температуры'/>
+            <LineGraph data={plantScatterGraphData} text='Цена на кирпич' color="#2D46B9" graphLabel='Зависимость потребления заводов от цены на кирпич'/>
             <AreaGraph data={areaGraphData}/>
             </>
         )

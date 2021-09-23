@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router'
 import { ITableData } from '../types/types'
 import { withStyles, Theme, createStyles, makeStyles } from '@material-ui/core/styles';
@@ -12,10 +12,12 @@ import Paper from '@material-ui/core/Paper';
 import Pagination from './Pagination/Pagination'
 import Spinner from './Spinner/Spinner'
 import EditableCell from './EditableCell';
+import DatesPanel from './DatesPanel';
+import { Context } from './Context';
+import { useData } from './MainScreen';
 
 
 interface Props {
-    data: ITableData[]
     house: boolean
     plant: boolean
 }
@@ -27,9 +29,9 @@ interface ItemPageParams {
 const Cell = withStyles((theme: Theme) =>
     createStyles({
         head: {
-            backgroundColor: '#bbb0e8',
-            color: theme.palette.common.black,
-            fontFamily: "'Montserrat Alternates', sans-serif",
+            backgroundColor: 'teal',
+            color: theme.palette.common.white,
+            fontFamily: "'Montserrat Alternates', sans-serif"
         },
             body: {
             fontSize: 14,
@@ -45,6 +47,7 @@ const Row = withStyles((theme: Theme) =>
             '&:nth-of-type(odd)': {
                 backgroundColor: '#e3e3e3',
             },
+            maxWidth: 1080
         },
     }),
 )(TableRow);
@@ -52,18 +55,23 @@ const Row = withStyles((theme: Theme) =>
 
 const useStyles = makeStyles({
     table: {
-        minWidth: '500px',
         boxShadow: '(5px 5px 15px rgba(0, 0, 0, 0.25))'
     },
 });
 
 let PageSize = 30;
 
-export default function ConsumerTable({data, house, plant}: Props): JSX.Element {
+export default function ConsumerTable({house, plant}: Props): JSX.Element {
 
-    const [tableData, setTableData] = useState<ITableData[]>([])
+    const { state, dispatch } = useContext(Context);
+
+    const {data} = useData()
+
+    const [tableData, setTableData] = useState<ITableData[]>(state)
 
     const [currentPage, setCurrentPage] = useState(1);
+
+    const [filteredData, setFilteredData] = useState<ITableData[]>([])
 
     const [slicedTableData, setSlicedTableData] = useState<ITableData[]>([])
 
@@ -119,14 +127,18 @@ export default function ConsumerTable({data, house, plant}: Props): JSX.Element 
     }
 
     useEffect(() => {
-        data && setTableData(data)
-    }, [data])
+        dispatch(tableData)
+    }, [tableData, dispatch])
+
+    useEffect(() => {
+        state.length === 0 && data && setTableData(data)
+}, [data, state])
 
     useEffect(() => {
         const firstPageIndex = (currentPage - 1) * PageSize;
         const lastPageIndex = firstPageIndex + PageSize;
-        setSlicedTableData(tableData.slice(firstPageIndex, lastPageIndex))
-    },[tableData, currentPage])
+        setSlicedTableData(filteredData.slice(firstPageIndex, lastPageIndex))
+    },[filteredData, currentPage])
 
 
     if (slicedTableData) {
@@ -137,6 +149,7 @@ export default function ConsumerTable({data, house, plant}: Props): JSX.Element 
                 {house && slicedTableData[0]?.houses[id].name}
                 {plant && slicedTableData[0]?.plants[id].name}
             </h4>
+            <DatesPanel data={tableData} setFilterData={setFilteredData}/>
             <TableContainer component={Paper}>
                 <Table className={classes.table} aria-label="customized table">
                     <TableHead>
@@ -222,7 +235,7 @@ export default function ConsumerTable({data, house, plant}: Props): JSX.Element 
                 siblingCount = {1}
                 className="pagination-bar"
                 currentPage={currentPage}
-                totalCount={tableData.length}
+                totalCount={filteredData.length}
                 pageSize={PageSize}
                 onPageChange={(page) => setCurrentPage(page)}
             />

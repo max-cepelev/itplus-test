@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React from 'react'
+import React, { useReducer } from 'react'
 import { ReactElement } from 'react';
 import { useQuery } from 'react-query';
 import { BrowserRouter, Route, Switch } from 'react-router-dom';
@@ -8,6 +8,7 @@ import ConsumerPage from './pages/ConsumerPage';
 import GraphsPage from './pages/GraphsPage';
 import Menu from './Menu/Menu';
 import TablePage from './pages/TablePage';
+import { Context } from './Context';
 
 const dataTransformation = (data: IData) => {
     
@@ -72,26 +73,34 @@ export function useData() {
 
 
 export default function MainScreen(): ReactElement {
+
+    const reducer = (state: ITableData[], newData: ITableData[]) => {
+        return [...newData];
+    };
+
+    const [state, dispatch] = useReducer(reducer, [])
     
     return (
         <BrowserRouter>
-            <Switch>
-                <Route path='/' exact>
-                    <Menu/>
-                </Route>   
-                <Route path='/table' exact>
-                    <TablePage/>
-                </Route>            
-                <Route path='/graphs' exact>
-                    <GraphsPage/>
-                </Route>
-                <Route path='/houses/:id'>
-                    <ConsumerPage house={true} plant={false}/>
-                </Route>
-                <Route path='/plants/:id'>
-                    <ConsumerPage house={false} plant={true}/>
-                </Route>
-            </Switch>
+            <Context.Provider value={{state, dispatch}}>
+                <Switch>
+                    <Route path='/' exact>
+                        <Menu/>
+                    </Route>   
+                    <Route path='/table' exact>
+                        <TablePage/>
+                    </Route>            
+                    <Route path='/graphs' exact>
+                        <GraphsPage/>
+                    </Route>
+                    <Route path='/houses/:id'>
+                        <ConsumerPage house={true} plant={false}/>
+                    </Route>
+                    <Route path='/plants/:id'>
+                        <ConsumerPage house={false} plant={true}/>
+                    </Route>
+                </Switch>
+            </Context.Provider>
         </BrowserRouter>
     )
 }

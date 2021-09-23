@@ -2,9 +2,9 @@ import React, { Dispatch, SetStateAction, useEffect} from 'react';
 import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import TextField from '@material-ui/core/TextField';
 import { ITableData } from '../types/types';
-import { useData } from './MainScreen';
 
 interface Props {
+    data: ITableData[],
     setFilterData: Dispatch<SetStateAction<ITableData[]>>
 }
 interface SelectedDateProps {
@@ -24,7 +24,9 @@ const useStyles = makeStyles((theme: Theme) =>
             height: '90px',
             justifyContent: 'space-around',
             alignItems: 'center',
-            borderRadius: '8px'
+            borderRadius: '8px',
+            boxShadow: '10px 10px 25px rgba(0, 0, 0, 0.25)',
+            fontFamily: "Montserrat Alternates"
         },
         textField: {
             marginLeft: theme.spacing(1),
@@ -34,9 +36,7 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function SearchPanel({setFilterData}: Props) {
-
-    const {data} = useData();
+export default function DatesPanel({data, setFilterData}: Props) {
 
   // The first commit of Material-UI
     const [selectedDate, setSelectedDate] = React.useState<SelectedDateProps>({
